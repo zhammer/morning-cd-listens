@@ -15,13 +15,10 @@ jobs:
           name: Run flake8
           command: pipenv run flake8 listens/
       - run:
-          name: Create directory for pacts (this should not be necessary soon)
-          command: mkdir -p $PACT_DIRECTORY
-      - run:
           name: Run pytest
           command: pipenv run pytest --junitxml=test-results/pytest/results.xml
       - run:
-          name: Run behave
+          name: Run behave (and generate consumer pact files)
           command: pipenv run behave --junit --junit-directory=test-results/behave --no-color
       - persist_to_workspace:
           root: .workspace
@@ -35,7 +32,7 @@ jobs:
     environment:
       PACT_DIRECTORY: .workspace/pacts
     steps:
-      - install-pact-broker-client  # need to run tests before the pact stuff
+      - install-pact-broker-client
       - attach_workspace:
           at: .workspace
       - run:
