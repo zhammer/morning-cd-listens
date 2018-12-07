@@ -1,0 +1,61 @@
+service: listens
+
+provider:
+  name: aws
+  runtime: python3.7
+  apiKeys:
+    - listens-service-key
+
+package:
+  include:
+    - listens/**
+
+functions:
+  rest:
+    description: Function for all listens service endpoints
+    handler:
+      listens/delivery/aws_lambda/rest.handler
+    events:
+      - http:  # get listen
+          path: /{id}
+          method: get
+          private: true
+      - http:  # get listens
+          path: /
+          method: get
+          private: true
+      - http:  # submit listen
+          path: /
+          method: post
+          private: true
+    environment:
+      DATABASE_CONNECTION_STRING: ${self:custom.secrets.DATABASE_CONNECTION_STRING}
+      SPOTIFY_CLIENT_ID: ${self:custom.secrets.SPOTIFY_CLIENT_ID}
+      SPOTIFY_CLIENT_SECRET: ${self:custom.secrets.SPOTIFY_CLIENT_SECRET}
+      SUNLIGHT_SERVICE_API_KEY: ${self:custom.secrets.SUNLIGHT_SERVICE_API_KEY}
+    vpc:
+      securityGroupIds:
+        - sg-0adf9c7c69d863eb5
+      subnetIds:
+        - subnet-09a25d5f1adcc44c7
+        - subnet-0d40a6ff68c401dd5
+        - subnet-047fe21bec462bcc5
+        - subnet-038478ac6e33b3974
+        - subnet-06c744148461a661c
+
+custom:
+  customDomain:
+    domainName: micro.morningcd.com
+    certificateName: "*.morningcd.com"
+    basePath: listens
+  pythonRequirements:
+    dockerizePip: non-linux
+  secrets:
+    DATABASE_CONNECTION_STRING: ${env:DATABASE_CONNECTION_STRING}
+    SPOTIFY_CLIENT_ID: ${env:SPOTIFY_CLIENT_ID}
+    SPOTIFY_CLIENT_SECRET: ${env:SPOTIFY_CLIENT_SECRET}
+    SUNLIGHT_SERVICE_API_KEY: ${env:SUNLIGHT_SERVICE_API_KEY}
+
+plugins:
+  - serverless-python-requirements
+  - serverless-domain-manager

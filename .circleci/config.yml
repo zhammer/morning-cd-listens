@@ -1,0 +1,184 @@
+version: 2.1
+
+jobs:
+  test:
+    executor: python-node-with-postgres-executor
+    environment:
+      PACT_DIRECTORY: .workspace/pacts
+    steps:
+      - checkout
+      - install-python-dependencies
+      - run:
+          name: Run mypy
+          command: pipenv run mypy listens/
+      - run:
+          name: Run flake8
+          command: pipenv run flake8 listens/
+      - run:
+          name: Create directory for pacts (this should not be necessary soon)
+          command: mkdir -p $PACT_DIRECTORY
+      - run:
+          name: Run pytest
+          command: pipenv run pytest --junitxml=test-results/pytest/results.xml
+      - run:
+          name: Run behave
+          command: pipenv run behave --junit --junit-directory=test-results/behave --no-color
+      - persist_to_workspace:
+          root: .workspace
+          paths:
+            - pacts
+      - store_test_results:
+          path: test-results
+
+  publish-feature-consumer-pacts:
+    executor: python-node-executor
+    environment:
+      PACT_DIRECTORY: .workspace/pacts
+    steps:
+      - install-pact-broker-client  # need to run tests before the pact stuff
+      - attach_workspace:
+          at: .workspace
+      - run:
+          name: Publish pacts
+          command: >-
+            pact-broker publish $PACT_DIRECTORY -a $CIRCLE_SHA1 --tag $CIRCLE_BRANCH -b $PACT_BROKER_HOST
+
+  publish-master-consumer-pacts:  # i annoyingly have to define this twice so workflow doesnt get confused
+    executor: python-node-executor
+    environment:
+      PACT_DIRECTORY: .workspace/pacts
+    steps:
+      - install-pact-broker-client
+      - attach_workspace:
+          at: .workspace
+      - run:
+          name: Publish pacts
+          command: >-
+            pact-broker publish $PACT_DIRECTORY -a $CIRCLE_SHA1 --tag master -b $PACT_BROKER_HOST
+
+  check-consumer-pacts-verified:
+    executor: python-node-executor
+    steps:
+      - install-pact-broker-client
+      - run:
+          name: Check if consumer pacts are supported by provider master branches
+          command: >-
+            pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1 -b $PACT_BROKER_HOST
+
+  build-serverless-package:
+    executor: python-node-executor
+    steps:
+      - checkout
+      - install-js-dependencies
+      - run:
+          name: Build serverless package
+          command: yarn run sls package -p .workspace/serverless_package
+      - persist_to_workspace:
+          root: .workspace
+          paths:
+            - serverless_package
+
+  deploy:
+    executor: python-node-executor
+    steps:
+      - checkout
+      - install-js-dependencies
+      - attach_workspace:
+          at: .workspace
+      - run:
+          name: Deploy serverless package
+          command: yarn run sls deploy -p .workspace/serverless_package
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test
+      - build-serverless-package
+      - publish-feature-consumer-pacts:
+          context: morningcd-pact-broker
+          requires:
+            - test
+      - check-consumer-pacts-verified:
+          context: morningcd-pact-broker
+          requires:
+            - publish-feature-consumer-pacts
+
+      # master jobs
+      - deploy-hold:
+          filters:
+            branches:
+              only: master
+          type: approval
+          requires:
+            - test
+            - build-serverless-package
+            - publish-feature-consumer-pacts
+            - check-consumer-pacts-verified
+
+      - deploy:
+          context: morningcd-aws
+          filters:
+            branches:
+              only: master
+          requires:
+            - deploy-hold
+
+      - publish-master-consumer-pacts:
+          context: morningcd-pact-broker
+          filters:
+            branches:
+              only: master
+          requires:
+            - deploy
+
+executors:
+  python-node-with-postgres-executor:
+    docker:
+      - image: circleci/python:3.7.1-stretch
+        environment:
+          TEST_DATABASE_CONNECTION_STRING: postgresql://root@localhost/circle_test
+      - image: circleci/postgres:9.6.5-alpine-ram
+  python-node-executor:
+    docker:
+      - image: circleci/python:3.7.1-stretch-node
+
+commands:
+  install-pact-broker-client:
+    steps:
+      - run: |
+          curl -LO https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.63.0/pact-1.63.0-linux-x86_64.tar.gz
+          tar xzf pact-1.63.0-linux-x86_64.tar.gz --transform s/pact/pact_ruby_standalone/
+          sudo cp -r pact_ruby_standalone/bin/pact-broker /usr/bin
+          sudo cp -r pact_ruby_standalone/lib/* /usr/lib
+          rm -fr pact_ruby_standalone
+          rm -fr pact-1.63.0-linux-x86_64.tar.gz
+
+  install-python-dependencies:
+    description: "Install python dependencies from Pipfile.lock and cache results."
+    steps:
+      - restore_cache:
+          keys:
+            - pipenv-cache-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-
+      - run:
+          name: Install dependencies
+          command: pipenv sync --dev
+      - save_cache:
+          key: pipenv-cache-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ~/.local
+            - ~/.cache
+
+  install-js-dependencies:
+    steps:
+      - restore_cache:
+          keys:
+            - js-cache-{{ checksum "yarn.lock" }}
+            - js-cache-
+      - run:
+          name: Install dependencies
+          command: yarn install
+      - save_cache:
+          key: js-cache-{{ checksum "yarn.lock" }}
+          paths: node_modules
