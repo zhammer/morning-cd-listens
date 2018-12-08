@@ -76,6 +76,7 @@ jobs:
   check-consumer-pacts-verified:
     executor: python-node-executor
     steps:
+      - checkout
       - install-pact-broker-client
       - run:
           name: Check if consumer pacts are supported by provider master branches
