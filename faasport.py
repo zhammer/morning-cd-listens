@@ -26,6 +26,8 @@ DATABASE_CONNECTION_STRING = os.environ.get(
 @always
 def always_() -> Generator:
     engine = create_engine(DATABASE_CONNECTION_STRING)
+    session = sessionmaker(bind=engine)()
+    session.close_all()
     models.Base.metadata.drop_all(engine)
     models.Base.metadata.create_all(engine)
 
