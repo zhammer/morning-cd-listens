@@ -81,6 +81,8 @@ jobs:
           name: Check if consumer pacts are supported by provider master branches
           command: >-
             pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1 -b $PACT_BROKER_HOST
+            --output table || pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1
+            -b $PACT_BROKER_HOST --output json | python scripts/can-i-deploy-consumer.py
 
   build-serverless-package:
     executor: python-node-executor
