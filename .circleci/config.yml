@@ -79,6 +79,7 @@ jobs:
       - checkout
       - install-pact-broker-client
       - run:
+          shell: /bin/bash -e
           name: Check if consumer pacts are supported by provider master branches
           command: >-
             pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1 -b $PACT_BROKER_HOST
