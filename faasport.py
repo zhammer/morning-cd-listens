@@ -7,14 +7,18 @@ from unittest.mock import patch
 from faaspact_verifier import always, faasport, provider_state
 from faaspact_verifier.definitions import Request, Response
 
+import freezegun
+
 import responses
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from listens.definitions import MusicProvider
+from listens.definitions import MusicProvider, SunlightWindow
 from listens.delivery.aws_lambda.rest import handler
 from listens.gateways.db.sqlalchemy import models
+from listens.gateways.music import SpotifyGateway
+from listens.gateways.sunlight import SunlightServiceGateway
 
 
 DATABASE_CONNECTION_STRING = os.environ.get(
@@ -38,7 +42,7 @@ def always_() -> Generator:
         'SPOTIFY_CLIENT_SECRET': 'mock spotify_client_secret'
     }
     with patch.dict(os.environ, mock_env):
-        with responses.RequestsMock() as rsps:
+        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
             rsps.add(responses.POST, 'https://accounts.spotify.com/api/token',
                      json={'access_token': 'fake access token'})
             yield
@@ -76,6 +80,42 @@ def a_listen_exists(fields: Dict) -> Generator:
     yield
 
 
+@provider_state('a spotify song exists with the id')
+def a_spotify_song_exists_with_the_id(id: str) -> Generator:
+    with patch.object(SpotifyGateway,
+                      'song_exists',
+                      side_effect=lambda song_id, provider: song_id == id):
+        yield
+
+
+@provider_state('its daytime at 11am on november 14th in new york')
+def its_day() -> Generator:
+    now = datetime(2018, 11, 14, 16, 0, 0)
+    sunlight_window = SunlightWindow(
+        sunrise_utc=datetime(2018, 11, 14, 11, 42, 25),
+        sunset_utc=datetime(2018, 11, 14, 21, 38, 42)
+    )
+    with freezegun.freeze_time(now):
+        with patch.object(SunlightServiceGateway,
+                          'fetch_sunlight_window',
+                          return_value=sunlight_window):
+            yield
+
+
+@provider_state('its after sunset at 9pm on november 14th in new york')
+def its_night() -> Generator:
+    now = datetime(2018, 11, 15, 2, 0, 0)
+    sunlight_window = SunlightWindow(
+        sunrise_utc=datetime(2018, 11, 15, 11, 43, 35),
+        sunset_utc=datetime(2018, 11, 15, 21, 37, 52)
+    )
+    with freezegun.freeze_time(now):
+        with patch.object(SunlightServiceGateway,
+                          'fetch_sunlight_window',
+                          return_value=sunlight_window):
+            yield
+
+
 @faasport
 def port(request: Request) -> Response:
     event = _build_aws_event(request)
@@ -90,7 +130,7 @@ def _build_aws_event(request: Request) -> Dict:
         'headers': request.headers,
         'path': request.path,
         'httpMethod': request.method,
-        'body': request.body,
+        'body': json.dumps(request.body),
         'pathParameters': {'id': request.path.split('/')[-1]},
         'queryStringParameters': query_params
     }
