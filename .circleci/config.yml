@@ -10,10 +10,10 @@ jobs:
       - install-python-dependencies
       - run:
           name: Run mypy
-          command: pipenv run mypy listens/
+          command: pipenv run mypy listens/ faasport.py
       - run:
           name: Run flake8
-          command: pipenv run flake8 listens/
+          command: pipenv run flake8 listens/ faasport.py
       - run:
           name: Run pytest
           command: pipenv run pytest --junitxml=test-results/pytest/results.xml
@@ -26,6 +26,26 @@ jobs:
             - pacts
       - store_test_results:
           path: test-results
+
+  test-verify-provider-pacts:
+    executor: python-node-with-postgres-executor
+    steps:
+      - checkout
+      - install-python-dependencies
+      - run:
+          name: Verify pacts (but dont publish)
+          command: >-
+            PYTHONPATH=. pipenv run faaspact-verifier -p listens -f faasport
+            --github-pr "$CIRCLE_PULL_REQUEST"
+
+  verify-provider-pacts:
+    executor: python-node-with-postgres-executor
+    steps:
+      - checkout
+      - install-python-dependencies
+      - run:
+          name: Verify pacts and publish results
+          command: PYTHONPATH=. pipenv run faaspact-verifier -p listens -f faasport --publish-results
 
   publish-feature-consumer-pacts:
     executor: python-node-executor
@@ -56,11 +76,15 @@ jobs:
   check-consumer-pacts-verified:
     executor: python-node-executor
     steps:
+      - checkout
       - install-pact-broker-client
       - run:
+          shell: /bin/bash -e
           name: Check if consumer pacts are supported by provider master branches
           command: >-
             pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1 -b $PACT_BROKER_HOST
+            --output table || pact-broker can-i-deploy -a listens --version $CIRCLE_SHA1
+            -b $PACT_BROKER_HOST --output json | python scripts/can-i-deploy-consumer.py
 
   build-serverless-package:
     executor: python-node-executor
@@ -92,6 +116,8 @@ workflows:
     jobs:
       - test
       - build-serverless-package
+      - test-verify-provider-pacts:
+          context: morningcd-pact-broker
       - publish-feature-consumer-pacts:
           context: morningcd-pact-broker
           requires:
@@ -120,6 +146,14 @@ workflows:
               only: master
           requires:
             - deploy-hold
+
+      - verify-provider-pacts:
+          context: morningcd-pact-broker
+          filters:
+            branches:
+              only: master
+          requires:
+            - deploy
 
       - publish-master-consumer-pacts:
           context: morningcd-pact-broker
