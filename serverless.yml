@@ -59,15 +59,15 @@ custom:
   warmup:
     schedule: rate(15 minutes)
     prewarm: true
-    role: morningCdWarmupRole
+    role: morningCdListensWarmupRole
 
 # this is all for warmup
 resources:
   Resources:
-    morningCdWarmupRole:
+    morningCdListensWarmupRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: MorningCdWarmupRole
+        RoleName: MorningCdListensWarmupRole
         AssumeRolePolicyDocument:
           Version: '2012-10-17'
           Statement:
