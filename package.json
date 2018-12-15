@@ -3,5 +3,8 @@
     "serverless": "^1.34.1",
     "serverless-domain-manager": "^2.6.6",
     "serverless-python-requirements": "^4.2.5"
+  },
+  "dependencies": {
+    "serverless-plugin-warmup": "^4.2.0-rc.1"
   }
 }
