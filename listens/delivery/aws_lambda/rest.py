@@ -11,10 +11,11 @@ from listens.delivery.aws_lambda import util
 from listens.use_listens import get_listen, get_listens, submit_listen
 
 
-sentry_sdk.init(
-    dsn="https://aaf4d2452f84464cafdc6004d89c1724@sentry.io/1357179",
-    integrations=[AwsLambdaIntegration()]
-)
+if os.environ.get('AWS_EXECUTION_ENV'):
+    sentry_sdk.init(
+        dsn="https://aaf4d2452f84464cafdc6004d89c1724@sentry.io/1357179",
+        integrations=[AwsLambdaIntegration()]
+    )
 
 
 def handler(event: Dict, context: Dict) -> Dict:
