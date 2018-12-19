@@ -4,8 +4,17 @@ import re
 from datetime import datetime
 from typing import Dict, cast
 
+import sentry_sdk
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
+
 from listens.delivery.aws_lambda import util
 from listens.use_listens import get_listen, get_listens, submit_listen
+
+
+sentry_sdk.init(
+    dsn="https://aaf4d2452f84464cafdc6004d89c1724@sentry.io/1357179",
+    integrations=[AwsLambdaIntegration()]
+)
 
 
 def handler(event: Dict, context: Dict) -> Dict:
