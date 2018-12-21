@@ -1,10 +1,11 @@
 import json
 from datetime import datetime
 from functools import wraps
-from typing import Callable, Dict, NamedTuple, Optional
+from typing import Dict, NamedTuple, Optional
 
 from listens.context import Context
 from listens.definitions import Listen, ListenInput, MusicProvider, SortOrder, exceptions
+from listens.delivery.aws_lambda.types import AwsHandler
 from listens.gateways.db import SqlAlchemyDbGateway
 from listens.gateways.music import SpotifyGateway
 from listens.gateways.sunlight import SunlightServiceGateway
@@ -68,9 +69,6 @@ def pluck_listen_input(raw_listen_input: Dict, current_time_utc: datetime) -> Li
         iana_timezone=raw_listen_input['iana_timezone'],
         listen_time_utc=current_time_utc
     )
-
-
-AwsHandler = Callable[[Dict, Dict], Dict]
 
 
 def catch_listens_service_errors(func: AwsHandler) -> AwsHandler:
