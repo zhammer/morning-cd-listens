@@ -100,3 +100,31 @@ def catch_listens_service_errors(func: AwsHandler) -> AwsHandler:
             raise
 
     return inner
+
+
+def intercept_warmup_events(func: AwsHandler) -> AwsHandler:
+    """Decorate an aws lambda handler so that any events from the serverless-plugin-warmup are
+    handled by immediately returning a 204 (No Content) response, mainly to distinguish from 200s.
+
+    # A handler decorated with @intercept_warmup_events
+    >>> @intercept_warmup_events
+    ... def hello_world_handler(event, context):
+    ...     return {'statusCode': 200, 'message': 'Hello world!'}
+    ...
+
+    # An event from 'serverless-plugin-warmup' returns an empty 204 response
+    >>> hello_world_handler(event={'source': 'serverless-plugin-warmup'}, context={})
+    {'statusCode': 204}
+
+    # All other events run handler code
+    >>> hello_world_handler(event={}, context={})
+    {'statusCode': 200, 'message': 'Hello world!'}
+    """
+    @wraps(func)
+    def inner(event: Dict, context: Dict) -> Dict:
+        if event.get('source') == 'serverless-plugin-warmup':
+            return {'statusCode': 204}
+        else:
+            return func(event, context)
+
+    return inner
