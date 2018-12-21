@@ -18,6 +18,7 @@ if os.environ.get('AWS_EXECUTION_ENV'):
     )
 
 
+@util.intercept_warmup_events
 def handler(event: Dict, context: Dict) -> Dict:
     """Routing all handlers through one aws function means we only have to keep one lambda 'warm'.
     """
