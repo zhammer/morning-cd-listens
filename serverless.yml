@@ -5,6 +5,12 @@ provider:
   runtime: python3.7
   apiKeys:
     - listens-service-key
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource:
+        Ref: ListenAddedSNSTopic
 
 package:
   include:
@@ -58,7 +64,7 @@ custom:
     SPOTIFY_CLIENT_SECRET: ${env:SPOTIFY_CLIENT_SECRET}
     SUNLIGHT_SERVICE_API_KEY: ${env:SUNLIGHT_SERVICE_API_KEY}
     LISTEN_ADDED_SNS_TOPIC:
-      Fn::GetAtt: [ListenAddedSNSTopic, Arn]
+      Ref: ListenAddedSNSTopic
   warmup:
     schedule: rate(15 minutes)
     prewarm: true
