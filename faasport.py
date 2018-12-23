@@ -18,6 +18,7 @@ from listens.definitions import MusicProvider, SunlightWindow
 from listens.delivery.aws_lambda.rest import handler
 from listens.gateways.db.sqlalchemy import models
 from listens.gateways.music import SpotifyGateway
+from listens.gateways.notification_gateway import NotificationGateway
 from listens.gateways.sunlight import SunlightServiceGateway
 
 
@@ -39,13 +40,15 @@ def always_() -> Generator:
         'DATABASE_CONNECTION_STRING': DATABASE_CONNECTION_STRING,
         'SUNLIGHT_SERVICE_API_KEY': 'mock sunlight service api key',
         'SPOTIFY_CLIENT_ID': 'mock spotify client id',
-        'SPOTIFY_CLIENT_SECRET': 'mock spotify_client_secret'
+        'SPOTIFY_CLIENT_SECRET': 'mock spotify_client_secret',
+        'LISTEN_ADDED_SNS_TOPIC': 'mock listen added sns topic'
     }
     with patch.dict(os.environ, mock_env):
-        with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
-            rsps.add(responses.POST, 'https://accounts.spotify.com/api/token',
-                     json={'access_token': 'fake access token'})
-            yield
+        with patch.object(NotificationGateway, 'client'):
+            with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
+                rsps.add(responses.POST, 'https://accounts.spotify.com/api/token',
+                         json={'access_token': 'fake access token'})
+                yield
 
 
 @provider_state('there are no listens in the database')

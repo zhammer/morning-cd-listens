@@ -40,4 +40,8 @@ def submit_listen(context: Context, listen_input: ListenInput) -> Listen:
     if not day_entity.is_day(listen_input.listen_time_utc, sunlight_window):
         raise SunlightError('Listens can only be submitted during the day.')
 
-    return context.db_gateway.add_listen(listen_input)
+    listen = context.db_gateway.add_listen(listen_input)
+
+    context.notification_gateway.announce_listen_added(listen)
+
+    return listen

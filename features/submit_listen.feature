@@ -8,6 +8,7 @@ Feature: Submit a listen to morning_cd
     When I submit my listen to morning.cd
     Then I get a response with my listen from morning.cd
     And I am able to find my listen on morning.cd
+    And my listen is announced to morning.cd
 
   Scenario: I submit a valid song to morning.cd after sunset
     Given my name is "Zach"

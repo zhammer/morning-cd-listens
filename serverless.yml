@@ -33,6 +33,7 @@ functions:
       SPOTIFY_CLIENT_ID: ${self:custom.secrets.SPOTIFY_CLIENT_ID}
       SPOTIFY_CLIENT_SECRET: ${self:custom.secrets.SPOTIFY_CLIENT_SECRET}
       SUNLIGHT_SERVICE_API_KEY: ${self:custom.secrets.SUNLIGHT_SERVICE_API_KEY}
+      LISTEN_ADDED_SNS_TOPIC: ${self:custom.secrets.LISTEN_ADDED_SNS_TOPIC}
     vpc:
       securityGroupIds:
         - sg-0adf9c7c69d863eb5
@@ -56,6 +57,8 @@ custom:
     SPOTIFY_CLIENT_ID: ${env:SPOTIFY_CLIENT_ID}
     SPOTIFY_CLIENT_SECRET: ${env:SPOTIFY_CLIENT_SECRET}
     SUNLIGHT_SERVICE_API_KEY: ${env:SUNLIGHT_SERVICE_API_KEY}
+    LISTEN_ADDED_SNS_TOPIC:
+      Fn::GetAtt: [ListenAddedSNSTopic, Arn]
   warmup:
     schedule: rate(15 minutes)
     prewarm: true
@@ -64,6 +67,11 @@ custom:
 # this is all for warmup
 resources:
   Resources:
+    ListenAddedSNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: Listen Added SNS Topic
+        TopicName: ListenAddedSNSTopic
     morningCdListensWarmupRole:
       Type: AWS::IAM::Role
       Properties:

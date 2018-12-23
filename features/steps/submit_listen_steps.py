@@ -2,6 +2,7 @@ import json
 import os
 from contextlib import contextmanager
 from datetime import datetime
+from unittest.mock import patch
 
 from behave import given, then, when
 
@@ -16,6 +17,7 @@ from features.fixtures.spotify import make_get_track_whispers_request, make_post
 from listens.definitions import MusicProvider
 from listens.delivery.aws_lambda.rest import handler as listens_handler
 from listens.gateways.db.sqlalchemy.models import SqlListen
+from listens.gateways.notification_gateway import NotificationGateway
 
 
 @given('my name is "{name}"')  # noqa: F811
@@ -68,8 +70,10 @@ def step_impl(context):
 
     with freeze_time(context.current_time_utc):
         with submit_listen_mock_network(context):
-            response = listens_handler(event, {})
+            with patch.object(NotificationGateway, 'client') as mock_sns_client:
+                response = listens_handler(event, {})
 
+    context.mock_sns_client = mock_sns_client
     context.response = response
 
 
@@ -114,6 +118,14 @@ def step_impl(context):
 def step_impl(context):
     sql_listens = context.session.query(SqlListen).all()
     assert sql_listens == []
+
+
+@then('my listen is announced to morning.cd')  # noqa: F811
+def step_impl(context):
+    context.mock_sns_client.publish.assert_called_with(
+        TopicArn=os.environ['LISTEN_ADDED_SNS_TOPIC'],
+        Message='{"listen_id": "1"}'
+    )
 
 
 @contextmanager
