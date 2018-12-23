@@ -8,6 +8,7 @@ from listens.definitions import Listen, ListenInput, MusicProvider, SortOrder, e
 from listens.delivery.aws_lambda.types import AwsHandler
 from listens.gateways.db import SqlAlchemyDbGateway
 from listens.gateways.music import SpotifyGateway
+from listens.gateways.notification_gateway import NotificationGateway
 from listens.gateways.sunlight import SunlightServiceGateway
 
 
@@ -21,13 +22,15 @@ class GetListensParams(NamedTuple):
 def create_default_context(db_connection_string: str,
                            sunlight_service_api_key: str,
                            spotify_client_id: str,
-                           spotify_client_secret: str) -> Context:
+                           spotify_client_secret: str,
+                           listen_added_topic_arn: str) -> Context:
     return Context(
         db_gateway=SqlAlchemyDbGateway(db_connection_string),
         music_gateway=SpotifyGateway(
             client_id=spotify_client_id,
             client_secret=spotify_client_secret
         ),
+        notification_gateway=NotificationGateway(listen_added_topic_arn),
         sunlight_gateway=SunlightServiceGateway(sunlight_service_api_key)
     )
 

@@ -31,6 +31,7 @@ def submit_listen_handler(event: Dict, context: Dict) -> Dict:
     sunlight_service_api_key = os.environ['SUNLIGHT_SERVICE_API_KEY']
     spotify_client_id = os.environ['SPOTIFY_CLIENT_ID']
     spotify_client_secret = os.environ['SPOTIFY_CLIENT_SECRET']
+    listen_added_topic_arn = os.environ['LISTEN_ADDED_SNS_TOPIC']
 
     current_time_utc = datetime.utcnow()
     listen_input = util.pluck_listen_input(json.loads(event['body']), current_time_utc)
@@ -38,7 +39,8 @@ def submit_listen_handler(event: Dict, context: Dict) -> Dict:
         database_connection_string,
         sunlight_service_api_key,
         spotify_client_id,
-        spotify_client_secret
+        spotify_client_secret,
+        listen_added_topic_arn
     )
 
     submitted_listen = submit_listen(listens_context, listen_input)
@@ -55,13 +57,15 @@ def get_listen_handler(event: Dict, context: Dict) -> Dict:
     sunlight_service_api_key = os.environ['SUNLIGHT_SERVICE_API_KEY']
     spotify_client_id = os.environ['SPOTIFY_CLIENT_ID']
     spotify_client_secret = os.environ['SPOTIFY_CLIENT_SECRET']
+    listen_added_topic_arn = os.environ['LISTEN_ADDED_SNS_TOPIC']
 
     listen_id = cast(str, event['pathParameters']['id'])
     listens_context = util.create_default_context(
         database_connection_string,
         sunlight_service_api_key,
         spotify_client_id,
-        spotify_client_secret
+        spotify_client_secret,
+        listen_added_topic_arn
     )
 
     listen = get_listen(listens_context, listen_id)
@@ -77,13 +81,15 @@ def get_listens_handler(event: Dict, context: Dict) -> Dict:
     sunlight_service_api_key = os.environ['SUNLIGHT_SERVICE_API_KEY']
     spotify_client_id = os.environ['SPOTIFY_CLIENT_ID']
     spotify_client_secret = os.environ['SPOTIFY_CLIENT_SECRET']
+    listen_added_topic_arn = os.environ['LISTEN_ADDED_SNS_TOPIC']
 
     get_listens_parameters = util.pluck_get_listens_params(event['queryStringParameters'] or {})
     listens_context = util.create_default_context(
         database_connection_string,
         sunlight_service_api_key,
         spotify_client_id,
-        spotify_client_secret
+        spotify_client_secret,
+        listen_added_topic_arn
     )
 
     listens = get_listens(listens_context, **get_listens_parameters._asdict())
