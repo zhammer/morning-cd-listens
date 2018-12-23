@@ -18,8 +18,8 @@ from listens.definitions import MusicProvider, SunlightWindow
 from listens.delivery.aws_lambda.rest import handler
 from listens.gateways.db.sqlalchemy import models
 from listens.gateways.music import SpotifyGateway
-from listens.gateways.sunlight import SunlightServiceGateway
 from listens.gateways.notification_gateway import NotificationGateway
+from listens.gateways.sunlight import SunlightServiceGateway
 
 
 DATABASE_CONNECTION_STRING = os.environ.get(
