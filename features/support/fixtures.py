@@ -17,7 +17,8 @@ def with_aws_lambda_environment_variables(context: behave.runner.Context,
         'DATABASE_CONNECTION_STRING': database_connection_string,
         'SUNLIGHT_SERVICE_API_KEY': 'mock sunlight service api key',
         'SPOTIFY_CLIENT_ID': 'mock spotify client id',
-        'SPOTIFY_CLIENT_SECRET': 'mock spotify_client_secret'
+        'SPOTIFY_CLIENT_SECRET': 'mock spotify_client_secret',
+        'LISTEN_ADDED_SNS_TOPIC': 'mock listen added sns topic'
     }
 
     with patch.dict(os.environ, mock_env):
