@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "30c72290ca7fa4fa663c681fda8ec826e1cf3d803fdb3085799d4a3a0efcb589"
+            "sha256": "7dfdaa873c4708d33cd154c5dbd62388326320cf854b077a89b7068312ba61b4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,21 @@
         ]
     },
     "default": {
+        "boto3": {
+            "hashes": [
+                "sha256:90c5634fcd9c658f8d1554885f33d8c472a9adcde5f29d92ef91dcd12bf2e646",
+                "sha256:f45a88dc66e935f03dcc7f41b7702fddfdd9d8ab1f29a9668687c3abba544e0e"
+            ],
+            "index": "pypi",
+            "version": "==1.9.71"
+        },
+        "botocore": {
+            "hashes": [
+                "sha256:d6fa29f28899892f77014c19afa40ec1b87ef1e57b15c7eac582e8d48eddf32d",
+                "sha256:e5bcea66a1ffad9b2e1ff2935a31455c76f689e00b924e9920cb012b177fbe35"
+            ],
+            "version": "==1.12.71"
+        },
         "certifi": {
             "hashes": [
                 "sha256:47f9c83ef4c0c621eaef743f133f09fa8a74a9b75f037e8624f83bd1b6626cb7",
@@ -30,12 +45,27 @@
             ],
             "version": "==3.0.4"
         },
+        "docutils": {
+            "hashes": [
+                "sha256:02aec4bd92ab067f6ff27a38a38a41173bf01bed8f89157768c1573f53e474a6",
+                "sha256:51e64ef2ebfb29cae1faa133b3710143496eca21c530f3f71424d77687764274",
+                "sha256:7a4bd47eaf6596e1295ecb11361139febe29b084a87bf005bf899f9a42edc3c6"
+            ],
+            "version": "==0.14"
+        },
         "idna": {
             "hashes": [
                 "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
                 "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"
             ],
             "version": "==2.8"
+        },
+        "jmespath": {
+            "hashes": [
+                "sha256:6a81d4c9aa62caf061cb517b4d9ad1dd300374cd4706997aff9cd6aedd61fc64",
+                "sha256:f11b4461f425740a1d908e9a3f7365c3d2e569f6ca68a2ff8bc5bcd9676edd63"
+            ],
+            "version": "==0.9.3"
         },
         "psycopg2-binary": {
             "hashes": [
@@ -73,6 +103,14 @@
             "index": "pypi",
             "version": "==2.7.6.1"
         },
+        "python-dateutil": {
+            "hashes": [
+                "sha256:063df5763652e21de43de7d9e00ccf239f953a832941e37be541614732cdfc93",
+                "sha256:88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
+            ],
+            "markers": "python_version >= '2.7'",
+            "version": "==2.7.5"
+        },
         "pytz": {
             "hashes": [
                 "sha256:31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca",
@@ -89,13 +127,27 @@
             "index": "pypi",
             "version": "==2.21.0"
         },
+        "s3transfer": {
+            "hashes": [
+                "sha256:90dc18e028989c609146e241ea153250be451e05ecc0c2832565231dacdf59c1",
+                "sha256:c7a9ec356982d5e9ab2d4b46391a7d6a950e2b04c472419f5fdec70cc0ada72f"
+            ],
+            "version": "==0.1.13"
+        },
         "sentry-sdk": {
             "hashes": [
-                "sha256:635f2c9dde9995150435a4f6ba06a944ba94e9754ad7594b42c2fcb001a44dfd",
-                "sha256:c1ff8034b819b46b38d110f5d7d613450dd047469924be0fdfb77c67c24f7df4"
+                "sha256:9f47807c9e9e39c6220779206dd7fc0de50d35af6d32470a09086f665056c641",
+                "sha256:e81f22975cdc0688b412efb35a36b6befbc4b89830d73d91d982ef4be919cc97"
             ],
             "index": "pypi",
-            "version": "==0.6.4"
+            "version": "==0.6.5"
+        },
+        "six": {
+            "hashes": [
+                "sha256:3350809f0555b11f552448330d0b52d5f24c91a322ea4a15ef22629740f3761c",
+                "sha256:d16a0141ec1a18405cd4ce8b4613101da75da0e9a7aec5bdd4fa804d0e0eba73"
+            ],
+            "version": "==1.12.0"
         },
         "sqlalchemy": {
             "hashes": [
@@ -109,6 +161,7 @@
                 "sha256:61bf29cada3fc2fbefad4fdf059ea4bd1b4a86d2b6d15e1c7c0b582b9752fe39",
                 "sha256:de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
             ],
+            "markers": "python_version >= '3.4'",
             "version": "==1.24.1"
         }
     },
@@ -166,11 +219,11 @@
         },
         "faaspact-verifier": {
             "hashes": [
-                "sha256:641a2164727b8ed98e45cf0787ec402a36d195e47cc45f8f949cd0de576db6fd",
-                "sha256:ad731a0b1a6e197e8bb277f32c952c0dc659f83733db4efc06717ae79e03950e"
+                "sha256:19c82c019225322e88974bc121450f3992930ffb1151a7f350b5db633608ec98",
+                "sha256:24a7388531839786cabb690b21d26a47353b9a448b004a382e393e31bf2e8f6b"
             ],
             "index": "pypi",
-            "version": "==0.0.6"
+            "version": "==0.0.7"
         },
         "flake8": {
             "hashes": [
@@ -243,10 +296,9 @@
         },
         "pactman": {
             "hashes": [
-                "sha256:1a67fa6b69944c1dd86b2a23d884fafa8bcd8597ec92cb7991d76678f172d1f4",
-                "sha256:5861f12d8e47add4b00a151562be85b844c0a35fb8b29fef4b9d2a2a925fb101"
+                "sha256:911b771e8b7cea69dd3daa6b13de88f59d194fcb2890a795ef370bdcd4050a8e"
             ],
-            "version": "==2.6.1"
+            "version": "==2.8.0"
         },
         "parse": {
             "hashes": [
@@ -316,6 +368,7 @@
                 "sha256:063df5763652e21de43de7d9e00ccf239f953a832941e37be541614732cdfc93",
                 "sha256:88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
             ],
+            "markers": "python_version >= '2.7'",
             "version": "==2.7.5"
         },
         "requests": {
@@ -418,6 +471,7 @@
                 "sha256:61bf29cada3fc2fbefad4fdf059ea4bd1b4a86d2b6d15e1c7c0b582b9752fe39",
                 "sha256:de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22"
             ],
+            "markers": "python_version >= '3.4'",
             "version": "==1.24.1"
         }
     }
