@@ -8,6 +8,7 @@ import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from listens.delivery.aws_lambda import util
+from listens.gateways.db import SqlAlchemyDbGateway
 from listens.use_listens import get_listen, get_listens, submit_listen
 
 
@@ -45,6 +46,9 @@ def submit_listen_handler(event: Dict, context: Dict) -> Dict:
 
     submitted_listen = submit_listen(listens_context, listen_input)
 
+    if isinstance(listens_context.db_gateway, SqlAlchemyDbGateway):
+        listens_context.db_gateway.close_connections()
+
     return {
         'statusCode': 200,
         'body': json.dumps(util.build_listen(submitted_listen))
@@ -69,6 +73,10 @@ def get_listen_handler(event: Dict, context: Dict) -> Dict:
     )
 
     listen = get_listen(listens_context, listen_id)
+
+    if isinstance(listens_context.db_gateway, SqlAlchemyDbGateway):
+        listens_context.db_gateway.close_connections()
+
     return {
         'statusCode': 200,
         'body': json.dumps(util.build_listen(listen))
@@ -93,6 +101,10 @@ def get_listens_handler(event: Dict, context: Dict) -> Dict:
     )
 
     listens = get_listens(listens_context, **get_listens_parameters._asdict())
+
+    if isinstance(listens_context.db_gateway, SqlAlchemyDbGateway):
+        listens_context.db_gateway.close_connections()
+
     return {
         'statusCode': 200,
         'body': json.dumps({'items': [util.build_listen(listen) for listen in listens]})
