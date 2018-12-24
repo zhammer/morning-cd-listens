@@ -40,7 +40,6 @@ functions:
       SPOTIFY_CLIENT_SECRET: ${self:custom.secrets.SPOTIFY_CLIENT_SECRET}
       SUNLIGHT_SERVICE_API_KEY: ${self:custom.secrets.SUNLIGHT_SERVICE_API_KEY}
       LISTEN_ADDED_SNS_TOPIC: ${self:custom.secrets.LISTEN_ADDED_SNS_TOPIC}
-    warmup: true
 
 custom:
   customDomain:
@@ -56,12 +55,7 @@ custom:
     SUNLIGHT_SERVICE_API_KEY: ${env:SUNLIGHT_SERVICE_API_KEY}
     LISTEN_ADDED_SNS_TOPIC:
       Ref: ListenAddedSNSTopic
-  warmup:
-    schedule: rate(15 minutes)
-    prewarm: true
-    role: morningCdListensWarmupRole
 
-# this is all for warmup
 resources:
   Resources:
     ListenAddedSNSTopic:
@@ -69,55 +63,7 @@ resources:
       Properties:
         DisplayName: Listen Added SNS Topic
         TopicName: ListenAddedSNSTopic
-    morningCdListensWarmupRole:
-      Type: AWS::IAM::Role
-      Properties:
-        RoleName: MorningCdListensWarmupRole
-        AssumeRolePolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Principal:
-                Service:
-                  - lambda.amazonaws.com
-              Action: sts:AssumeRole
-        Policies:
-          - PolicyName: invokeMorningCdLambdas
-            PolicyDocument:
-              Version: '2012-10-17'
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - logs:CreateLogGroup
-                    - logs:CreateLogStream
-                    - logs:PutLogEvents
-                  Resource:
-                    - 'Fn::Join':
-                      - ':'
-                      -
-                        - 'arn:aws:logs'
-                        - Ref: 'AWS::Region'
-                        - Ref: 'AWS::AccountId'
-                        - 'log-group:/aws/lambda/*:*:*'
-                - Effect: Allow
-                  Action:
-                    - ec2:CreateNetworkInterface
-                    - ec2:DescribeNetworkInterfaces
-                    - ec2:DetachNetworkInterface
-                    - ec2:DeleteNetworkInterface
-                  Resource: "*"
-                - Effect: 'Allow'
-                  Action:
-                    - 'lambda:InvokeFunction'
-                  Resource:
-                  - Fn::Join:
-                    - ':'
-                    - - arn:aws:lambda
-                      - Ref: AWS::Region
-                      - Ref: AWS::AccountId
-                      - function:${self:service}-${opt:stage, self:provider.stage}-*
 
 plugins:
   - serverless-python-requirements
   - serverless-domain-manager
-  - serverless-plugin-warmup
