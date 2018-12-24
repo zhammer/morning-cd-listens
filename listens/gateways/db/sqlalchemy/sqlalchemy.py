@@ -94,3 +94,7 @@ class SqlAlchemyDbGateway(DbGatewayABC):
     def persist_schema(self) -> None:
         """Not part of the DbGatewayABC."""
         Base.metadata.create_all(self.engine)
+
+    def close_connections(self) -> None:
+        """Not part of the DbGatewayABC."""
+        self.engine.dispose()
