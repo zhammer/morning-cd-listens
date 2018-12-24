@@ -3,6 +3,7 @@ from typing import Callable, Iterable, List, Optional, cast
 
 from sqlalchemy import asc, create_engine, desc
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 
 from listens.definitions import Listen, ListenInput, SortOrder, exceptions
 from listens.gateways.db import DbGatewayABC
@@ -12,7 +13,7 @@ from listens.gateways.db.sqlalchemy.models import Base, SqlListen
 class SqlAlchemyDbGateway(DbGatewayABC):
 
     def __init__(self, db_name: str, echo: bool = False) -> None:
-        self.engine = create_engine(db_name, echo=echo)
+        self.engine = create_engine(db_name, echo=echo, poolclass=NullPool)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
