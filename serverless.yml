@@ -40,15 +40,6 @@ functions:
       SPOTIFY_CLIENT_SECRET: ${self:custom.secrets.SPOTIFY_CLIENT_SECRET}
       SUNLIGHT_SERVICE_API_KEY: ${self:custom.secrets.SUNLIGHT_SERVICE_API_KEY}
       LISTEN_ADDED_SNS_TOPIC: ${self:custom.secrets.LISTEN_ADDED_SNS_TOPIC}
-    vpc:
-      securityGroupIds:
-        - sg-0adf9c7c69d863eb5
-      subnetIds:
-        - subnet-09a25d5f1adcc44c7
-        - subnet-0d40a6ff68c401dd5
-        - subnet-047fe21bec462bcc5
-        - subnet-038478ac6e33b3974
-        - subnet-06c744148461a661c
     warmup: true
 
 custom:
