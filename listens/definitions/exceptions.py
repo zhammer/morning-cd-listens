@@ -10,6 +10,10 @@ class InvalidSongError(ListensServiceException):
     """Exception raised upon attempting to submit a listen with an invalid song."""
 
 
+class InvalidListenInputError(ListensServiceException):
+    """Exception raised upon encountering an invalid listen input."""
+
+
 class SunlightError(ListensServiceException):
     """Exception raised upon encountering a day action attempted at night."""
 

@@ -97,6 +97,14 @@ def catch_listens_service_errors(func: AwsHandler) -> AwsHandler:
                 'statusCode': 404,
                 'body': json.dumps({'message': str(e)})
             }
+        except exceptions.InvalidListenInputError as e:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({
+                    'message': 'Invalid listen input.',
+                    'invalid_fields': e.args[0]
+                })
+            }
         except Exception:
             import traceback
             import logging
