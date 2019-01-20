@@ -3,11 +3,9 @@ from typing import List, Optional
 
 from listens.context import Context
 from listens.definitions import Listen, ListenInput, SortOrder
-from listens.definitions.exceptions import (
-    InvalidSongError,
-    SunlightError
-)
-from listens.entities import day as day_entity
+from listens.definitions.exceptions import InvalidListenInputError, \
+    InvalidSongError, SunlightError
+from listens.entities import day as day_entity, listen as listen_entity
 
 
 def get_listen(context: Context, listen_id: str) -> Listen:
@@ -29,6 +27,10 @@ def get_listens(context: Context,
 
 def submit_listen(context: Context, listen_input: ListenInput) -> Listen:
     """Submit a Listen to the database."""
+    invalid_reason = listen_entity.check_invalid(listen_input)
+    if invalid_reason:
+        raise InvalidListenInputError(invalid_reason)
+
     if not context.music_gateway.song_exists(listen_input.song_id, listen_input.song_provider):
         raise InvalidSongError(f'Song {listen_input.song_id} doesnt exist.')
 

@@ -128,6 +128,18 @@ def step_impl(context):
     )
 
 
+@given('my name is "{number:d}" characters long')
+def step_impl(context, number):
+    context.name = 'a' * number
+    context.listen_invalid = True
+
+
+@given('I write a note that is "{number:d}" characters long')
+def step_impl(context, number):
+    context.note = 'a' * number
+    context.listen_invalid = True
+
+
 @contextmanager
 def submit_listen_mock_network(context):
     pact_dir = os.environ.get('PACT_DIRECTORY', 'pacts')
@@ -155,6 +167,10 @@ def submit_listen_mock_network(context):
 
         # spotify gateway eagerly fetches client credentials on creation
         mock_responses.add(make_post_client_credentials())
+
+        if hasattr(context, 'listen_invalid') and context.listen_invalid:
+            yield mock_responses
+            return
 
         # we check if the song is valid
         mock_responses.add(make_get_track_whispers_request())
