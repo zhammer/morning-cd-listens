@@ -23,6 +23,7 @@ pytz = "*"
 psycopg2-binary = "*"
 sentry-sdk = "*"
 boto3 = "*"
+mypy-extensions = "*"
 
 [requires]
 python_version = "3.7"
