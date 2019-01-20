@@ -2,8 +2,8 @@ from typing import cast
 
 import requests
 
+from listens.abc import MusicGateway as MusicGatewayABC
 from listens.definitions import MusicProvider
-from listens.gateways.music import MusicGatewayABC
 
 
 class SpotifyGateway(MusicGatewayABC):

@@ -3,8 +3,8 @@ from typing import Dict
 
 import requests
 
+from listens.abc import SunlightGateway as SunlightGatewayABC
 from listens.definitions import SunlightWindow, exceptions
-from listens.gateways.sunlight import SunlightGatewayABC
 
 
 class SunlightServiceGateway(SunlightGatewayABC):

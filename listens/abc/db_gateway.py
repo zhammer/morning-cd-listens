@@ -5,7 +5,7 @@ from typing import List, Optional
 from listens.definitions import Listen, ListenInput, SortOrder
 
 
-class DbGatewayABC(ABC):
+class DbGateway(ABC):
 
     @abstractmethod
     def add_listen(self, listen_input: ListenInput) -> Listen:

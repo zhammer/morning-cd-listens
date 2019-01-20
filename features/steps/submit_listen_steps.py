@@ -16,8 +16,8 @@ from features.fixtures.spotify import make_get_track_whispers_request, make_post
 
 from listens.definitions import MusicProvider
 from listens.delivery.aws_lambda.rest import handler as listens_handler
-from listens.gateways.db.sqlalchemy.models import SqlListen
-from listens.gateways.notification_gateway import NotificationGateway
+from listens.gateways import SnsNotificationGateway
+from listens.gateways.sqlalchemy_db_gateway.models import SqlListen
 
 
 @given('my name is "{name}"')  # noqa: F811
@@ -70,7 +70,7 @@ def step_impl(context):
 
     with freeze_time(context.current_time_utc):
         with submit_listen_mock_network(context):
-            with patch.object(NotificationGateway, 'client') as mock_sns_client:
+            with patch.object(SnsNotificationGateway, 'client') as mock_sns_client:
                 response = listens_handler(event, {})
 
     context.mock_sns_client = mock_sns_client

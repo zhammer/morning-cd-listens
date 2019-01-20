@@ -1,9 +1,12 @@
 from typing import NamedTuple
 
-from listens.gateways.db import DbGatewayABC
-from listens.gateways.music import MusicGatewayABC
-from listens.gateways.notification_gateway_abc import NotificationGateway as NotificationGatewayABC
-from listens.gateways.sunlight import SunlightGatewayABC
+
+from listens.abc import (
+    DbGateway as DbGatewayABC,
+    MusicGateway as MusicGatewayABC,
+    NotificationGateway as NotificationGatewayABC,
+    SunlightGateway as SunlightGatewayABC
+)
 
 
 class Context(NamedTuple):
