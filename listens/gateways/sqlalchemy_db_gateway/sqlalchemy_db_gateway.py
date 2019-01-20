@@ -5,9 +5,9 @@ from sqlalchemy import asc, create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
+from listens.abc import DbGateway as DbGatewayABC
 from listens.definitions import Listen, ListenInput, SortOrder, exceptions
-from listens.gateways.db import DbGatewayABC
-from listens.gateways.db.sqlalchemy.models import Base, SqlListen
+from listens.gateways.sqlalchemy_db_gateway.models import Base, SqlListen
 
 
 class SqlAlchemyDbGateway(DbGatewayABC):

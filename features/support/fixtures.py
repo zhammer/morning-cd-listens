@@ -7,7 +7,7 @@ import behave
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from listens.gateways.db.sqlalchemy import models
+from listens.gateways.sqlalchemy_db_gateway import models
 
 
 @behave.fixture  # type: ignore

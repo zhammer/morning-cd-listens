@@ -8,7 +8,7 @@ import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
 from listens.delivery.aws_lambda import util
-from listens.gateways.db import SqlAlchemyDbGateway
+from listens.gateways import SqlAlchemyDbGateway
 from listens.use_listens import get_listen, get_listens, submit_listen
 
 

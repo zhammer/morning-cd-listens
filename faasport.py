@@ -16,10 +16,12 @@ from sqlalchemy.orm import sessionmaker
 
 from listens.definitions import MusicProvider, SunlightWindow
 from listens.delivery.aws_lambda.rest import handler
-from listens.gateways.db.sqlalchemy import models
-from listens.gateways.music import SpotifyGateway
-from listens.gateways.notification_gateway import NotificationGateway
-from listens.gateways.sunlight import SunlightServiceGateway
+from listens.gateways import (
+  SnsNotificationGateway,
+  SpotifyGateway,
+  SunlightServiceGateway
+)
+from listens.gateways.sqlalchemy_db_gateway import models
 
 
 DATABASE_CONNECTION_STRING = os.environ.get(
@@ -44,7 +46,7 @@ def always_() -> Generator:
         'LISTEN_ADDED_SNS_TOPIC': 'mock listen added sns topic'
     }
     with patch.dict(os.environ, mock_env):
-        with patch.object(NotificationGateway, 'client'):
+        with patch.object(SnsNotificationGateway, 'client'):
             with responses.RequestsMock(assert_all_requests_are_fired=False) as rsps:
                 rsps.add(responses.POST, 'https://accounts.spotify.com/api/token',
                          json={'access_token': 'fake access token'})
