@@ -9,7 +9,7 @@ MAX_NAME_LENGTH = 30
 
 def check_invalid(listen_input: ListenInput) -> Optional[InvalidReason]:
     error_message_by_field = {}
-    if len(listen_input.note) > MAX_NOTE_LENGTH:
+    if listen_input.note and len(listen_input.note) > MAX_NOTE_LENGTH:
         error_message_by_field['note'] = (
             f'note length {len(listen_input.note)} exceeds max: '
             f'{MAX_NOTE_LENGTH}.'

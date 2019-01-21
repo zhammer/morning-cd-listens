@@ -10,6 +10,17 @@ Feature: Submit a listen to morning_cd
     And I am able to find my listen on morning.cd
     And my listen is announced to morning.cd
 
+Scenario: I submit a valid song to morning.cd during the day with no note
+    Given my name is "Zach"
+    And I live in new york
+    And it's daytime at 10:30am on November 12th 2018
+    And the first song I listened to today was 'Whispers' by DAP The Contract
+    And I don't write a note
+    When I submit my listen to morning.cd
+    Then I get a response with my listen from morning.cd
+    And I am able to find my listen on morning.cd
+    And my listen is announced to morning.cd
+
   Scenario: I submit a valid song to morning.cd after sunset
     Given my name is "Zach"
     And I live in new york

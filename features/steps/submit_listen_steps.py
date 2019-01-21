@@ -128,16 +128,21 @@ def step_impl(context):
     )
 
 
-@given('my name is "{number:d}" characters long')
+@given('my name is "{number:d}" characters long')  # noqa: F811
 def step_impl(context, number):
     context.name = 'a' * number
     context.listen_invalid = True
 
 
-@given('I write a note that is "{number:d}" characters long')
+@given('I write a note that is "{number:d}" characters long')  # noqa: F811
 def step_impl(context, number):
     context.note = 'a' * number
     context.listen_invalid = True
+
+
+@given('I don\'t write a note')  # noqa: F811
+def step_impl(context):
+    context.note = None
 
 
 @contextmanager

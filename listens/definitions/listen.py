@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 from listens.definitions import MusicProvider
 
@@ -10,5 +10,5 @@ class Listen(NamedTuple):
     song_provider: MusicProvider
     listener_name: str
     listen_time_utc: datetime
-    note: str
+    note: Optional[str]
     iana_timezone: str

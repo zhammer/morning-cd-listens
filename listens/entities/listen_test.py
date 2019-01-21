@@ -73,6 +73,6 @@ def listen_input_factory(*,
         song_provider=MusicProvider.SPOTIFY,
         listener_name=listener_name if listener_name is not None else 'geez',
         listen_time_utc=datetime(2018, 11, 12, 5, 53, 38),
-        note=note if note is not None else 'shhh',
+        note=note,
         iana_timezone='Asia/Tokyo'
     )
