@@ -4,6 +4,7 @@ import requests
 
 from listens.abc import MusicGateway as MusicGatewayABC
 from listens.definitions import MusicProvider
+from listens.definitions.exceptions import SpotifyError
 
 
 class SpotifyGateway(MusicGatewayABC):
@@ -26,7 +27,7 @@ class SpotifyGateway(MusicGatewayABC):
             return False
 
         else:
-            raise RuntimeError(f'Unexpected error code from spotify. "{r.status_code}: {r.text}"')
+            raise SpotifyError(f'Unexpected error code from spotify. "{r.status_code}: {r.text}"')
 
     @staticmethod
     def fetch_bearer_token(client_id: str, client_secret: str) -> str:
@@ -35,5 +36,8 @@ class SpotifyGateway(MusicGatewayABC):
             auth=(client_id, client_secret),
             data={'grant_type': 'client_credentials'}
         )
+
+        if not r.status_code == requests.codes.all_good:
+            raise SpotifyError(f'Unexpected error code from spotify. "{r.status_code}: {r.text}"')
 
         return cast(str, r.json()['access_token'])

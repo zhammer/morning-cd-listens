@@ -24,3 +24,7 @@ class SunlightServiceError(ListensServiceException):
 
 class ListenDoesntExistError(ListensServiceException):
     """Exception raised upon attempting to query a listen that doesnt exist."""
+
+
+class SpotifyError(ListensServiceException):
+    """Exception raised upon interacting with the Spotify service."""
