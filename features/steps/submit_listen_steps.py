@@ -140,6 +140,11 @@ def step_impl(context, number):
     context.listen_invalid = True
 
 
+@given('I don\'t write a note')
+def step_impl(context):
+    context.note = None
+
+
 @contextmanager
 def submit_listen_mock_network(context):
     pact_dir = os.environ.get('PACT_DIRECTORY', 'pacts')
