@@ -24,6 +24,7 @@ psycopg2-binary = "*"
 sentry-sdk = "*"
 boto3 = "*"
 mypy-extensions = "*"
+aws-xray-sdk = "*"
 
 [requires]
 python_version = "3.7"
