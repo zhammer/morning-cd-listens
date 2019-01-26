@@ -5,12 +5,19 @@ provider:
   runtime: python3.7
   apiKeys:
     - listens-service-key
+  tracing: True
   iamRoleStatements:
     - Effect: Allow
       Action:
         - SNS:Publish
       Resource:
         Ref: ListenAddedSNSTopic
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
 
 package:
   include:
@@ -67,3 +74,4 @@ resources:
 plugins:
   - serverless-python-requirements
   - serverless-domain-manager
+  - serverless-plugin-tracing

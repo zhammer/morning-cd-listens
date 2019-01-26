@@ -1993,6 +1993,11 @@ serverless-domain-manager@^2.6.6:
     aws-sdk "^2.177.0"
     chalk "^2.0.1"
 
+serverless-plugin-tracing@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-tracing/-/serverless-plugin-tracing-2.0.0.tgz#df6b8b3166ac9bb70a37c7fc875014b2369158f6"
+  integrity sha1-32uLMWasm7cKN8f8h1AUsjaRWPY=
+
 serverless-python-requirements@^4.2.5:
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/serverless-python-requirements/-/serverless-python-requirements-4.2.5.tgz#1cb60847725c7bbcd92ffeb50391248faab3e03c"
