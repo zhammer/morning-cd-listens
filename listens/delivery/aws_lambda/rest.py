@@ -4,6 +4,8 @@ import re
 from datetime import datetime
 from typing import Dict, cast
 
+from aws_xray_sdk.core import patch as xray_patch
+
 import sentry_sdk
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 
@@ -13,10 +15,15 @@ from listens.use_listens import get_listen, get_listens, submit_listen
 
 
 if os.environ.get('AWS_EXECUTION_ENV'):
+    # setup sentry
     sentry_sdk.init(
         dsn="https://aaf4d2452f84464cafdc6004d89c1724@sentry.io/1357179",
         integrations=[AwsLambdaIntegration()]
     )
+
+    # setup xray patching
+    libraries = ('requests', 'boto3', 'botocore', 'psycopg2')
+    xray_patch(libraries)
 
 
 def handler(event: Dict, context: Dict) -> Dict:
