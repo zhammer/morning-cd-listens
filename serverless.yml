@@ -20,6 +20,8 @@ provider:
         - "*"
 
 package:
+  exclude:
+    - "**"
   include:
     - listens/**
 
